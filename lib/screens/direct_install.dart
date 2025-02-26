@@ -18,6 +18,15 @@ class _DirectInstallScreenState extends State<DirectInstallScreen> {
   bool _isSupportESim = false;
   final _flutterEsimPlugin = FlutterEsim();
 
+  @override
+  void initState() {
+    initPlatformState();
+    _flutterEsimPlugin.onEvent.listen((event) {
+      print(event);
+    });
+    super.initState();
+  }
+
   Future<void> initPlatformState() async {
     bool isSupportESim;
     // Platform messages may fail, so we use a try/catch PlatformException.
@@ -97,7 +106,7 @@ class _DirectInstallScreenState extends State<DirectInstallScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _installESim1,
+              onPressed: _installESim2,
               child: const Text('Install eSIM with Method2'),
             ),
           ],
