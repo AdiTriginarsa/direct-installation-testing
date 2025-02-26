@@ -47,7 +47,8 @@ class _DirectInstallScreenState extends State<DirectInstallScreen> {
     print('Text input: ${_textController.text}');
 
     try {
-      final result = await platform.invokeMethod("launchESimSetup", [_textController.text]);
+      final result = await platform.invokeMethod("launchESimSetup",
+          {"activation_code": _textController.text});
 
       if (kDebugMode) {
         print(result);
