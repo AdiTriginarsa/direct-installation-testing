@@ -30,6 +30,7 @@ class MainActivity: FlutterActivity(){
     private fun launchESimSetup(activationCode: String) {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(activationCode)
-        startActivity(intent)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(intent)
     }
 }

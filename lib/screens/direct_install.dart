@@ -14,15 +14,21 @@ class _DirectInstallScreenState extends State<DirectInstallScreen> {
   static const platform = MethodChannel('samples.altero.dev/esim');
 
   final _textController = TextEditingController();
+  late String message;
 
   bool _isSupportESim = false;
   final _flutterEsimPlugin = FlutterEsim();
 
   @override
   void initState() {
+    message = "";
+
     initPlatformState();
     _flutterEsimPlugin.onEvent.listen((event) {
-      print(event);
+      print(event.toString());
+      setState(() {
+        message = event.toString();
+      });
     });
     super.initState();
   }
@@ -48,10 +54,18 @@ class _DirectInstallScreenState extends State<DirectInstallScreen> {
   }
 
   Future<void> _installESim2() async {
+    setState(() {
+      message = "";
+    });
+    print('Install eSIM button pressed');
+    print('Text input: ${_textController.text}');
     await _flutterEsimPlugin.installEsimProfile(_textController.text);
   }
 
   Future<void> _installESim1() async {
+    setState(() {
+      message = "";
+    });
     print('Install eSIM button pressed');
     print('Text input: ${_textController.text}');
 
@@ -71,7 +85,19 @@ class _DirectInstallScreenState extends State<DirectInstallScreen> {
       if (kDebugMode) {
         print(e);
       }
+      setState(() {
+        message = e.toString();
+      });
       const snackBar = SnackBar(content: Text('An error occured'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  Future<void> copyMessage() async {
+    await Clipboard.setData(ClipboardData(text: message));
+
+    const snackBar = SnackBar(content: Text('Message copied'));
+    if(context.mounted){
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
@@ -109,6 +135,24 @@ class _DirectInstallScreenState extends State<DirectInstallScreen> {
               onPressed: _installESim2,
               child: const Text('Install eSIM with Method2'),
             ),
+            const SizedBox(height: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              SizedBox(
+                height: 400,
+                child: SingleChildScrollView(
+                  child: Text(message),
+                ),
+              ),
+              if(message.isNotEmpty)
+                ElevatedButton(
+                  onPressed: (){
+                    copyMessage();
+                  },
+                  child: const Text('Copy message'),
+                )
+            ],),
           ],
         ),
       ),
